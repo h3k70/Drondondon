@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -19,17 +18,20 @@ public class Drone : MonoBehaviour, IMiner
     private PathRenderer _pathRenderer;
     private IMineable _targetForMine;
     private IExtraction _targetForUpload;
+    private bool _isBusy;
 
     private Coroutine _mineCoroutine;
     private Coroutine _UnloadCoroutine;
 
     public Vector3 Position => transform.position;
-    public bool IsBusy { get; private set; }
+    public bool IsBusy { get { return _isBusy; } private set { _isBusy = value; BusyStatusChanged?.Invoke(_isBusy); } }
+    public float UnloadDeley { get => _UnloadDeley; private set => _UnloadDeley = value; }
 
     public UnityAction<IMiner> MineStarted { get; set; }
     public UnityAction<IMiner> MineEnded { get; set; }
     public UnityAction<IMiner> UnloadStarted { get; set; }
     public UnityAction<IMiner> UnloadEnded { get; set; }
+    public UnityAction<bool> BusyStatusChanged { get; set; }
 
     private void Awake()
     {

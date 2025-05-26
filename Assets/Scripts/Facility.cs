@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -41,6 +40,22 @@ public class Facility : MonoBehaviour, IExtraction
         var dron = Instantiate(_dronePref, transform.position, Quaternion.identity);
 
         _miners.Add(dron);
+    }
+
+    public void EnablePathDrawer()
+    {
+        foreach (var item in _miners)
+        {
+            item.DrawPath();
+        }
+    }
+
+    public void DisablePathDrawer()
+    {
+        foreach (var item in _miners)
+        {   
+            item.StopDrawPath();
+        }
     }
 
     private void SendDroUpload(IMiner miner)
