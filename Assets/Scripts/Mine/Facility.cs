@@ -8,7 +8,7 @@ public class Facility : MonoBehaviour, IExtraction
     [SerializeField] private Drone _dronePref;
 
     private List<IMineable> _minebles;
-    private List<IMiner> _miners = new();
+    private List<Drone> _miners = new();
     private Coroutine _mineCoroutine;
 
     public Vector3 Position => transform.position;
@@ -20,8 +20,7 @@ public class Facility : MonoBehaviour, IExtraction
     {
         _minebles = mineables;
 
-        for (int i = 0; i < startDronCount; i++)
-            Spawn();
+        Spawn(startDronCount);
     }
 
     public void StartMine()
@@ -35,11 +34,29 @@ public class Facility : MonoBehaviour, IExtraction
         TotalChanged?.Invoke(Total);
     }
 
-    public void Spawn()
+    public void Spawn(int count)
     {
-        var dron = Instantiate(_dronePref, transform.position, Quaternion.identity);
+        for (int i = 0; i < count; i++)
+        {
+            var dron = Instantiate(_dronePref, transform.position, Quaternion.identity);
 
-        _miners.Add(dron);
+            _miners.Add(dron);
+        }
+    }
+
+    public void UnSpawnAll()
+    {
+        foreach (var item in _miners)
+        {
+            Destroy(item.gameObject);
+        }
+        _miners.Clear();
+    }
+
+    public void SetDroneSpeed(float speed)
+    {
+        foreach(var item in _miners)
+            item.SetSpeed(speed);
     }
 
     public void EnablePathDrawer()

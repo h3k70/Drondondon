@@ -1,20 +1,54 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Game : MonoBehaviour
 {
     [SerializeField] private ResurceSpawner _resurceSpawner;
-    [SerializeField] private Facility _facility1;
-    [SerializeField] private Facility _facility2;
+    [SerializeField] private List<Facility> _facility;
     [SerializeField] private int _dronCount = 3;
 
-    private void Start()
+    public List<Facility> Facility { get => _facility; }
+
+    private void Awake()
     {
         _resurceSpawner.StartSpawn();
 
-        _facility1.Init(_resurceSpawner.Minebls, _dronCount);
-        _facility2.Init(_resurceSpawner.Minebls, _dronCount);
+        foreach (Facility facility in _facility)
+        {
+            facility.Init(_resurceSpawner.Minebls, _dronCount);
+            facility.StartMine();
+        }
+    }
 
-        _facility1.StartMine();
-        _facility2.StartMine();
+    public void SetDronCount(float dronCount)
+    {
+        foreach (Facility facility in _facility)
+        {
+            facility.UnSpawnAll();
+            facility.Spawn((int)dronCount);
+        }
+    }
+
+    public void SetSpeedForAllDrons(float speedForAllDrons)
+    {
+        foreach (Facility facility in _facility)
+            facility.SetDroneSpeed(speedForAllDrons);
+    }
+
+    public void EnablePathRender()
+    {
+        foreach (var item in _facility)
+            item.EnablePathDrawer();
+    }
+
+    public void DisablePathRender()
+    {
+        foreach (var item in _facility)
+            item.DisablePathDrawer();
+    }
+
+    public void SetSpawnDeleyForResurce(int spawnDeleyForResurce)
+    {
+        _resurceSpawner.SpawnDeley = spawnDeleyForResurce;
     }
 }

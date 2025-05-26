@@ -11,6 +11,7 @@ public interface IMiner
     public UnityAction<IMiner> UnloadStarted { get; set; }
     public UnityAction<IMiner> UnloadEnded { get; set; }
     public UnityAction<bool> BusyStatusChanged { get; set; }
+    public UnityAction<IMiner> Destroyed { get; set; }
 
     public void SetMineTarget(IMineable target);
     public void SetUnloadTarget(IExtraction target);

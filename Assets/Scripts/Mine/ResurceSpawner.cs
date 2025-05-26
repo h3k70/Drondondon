@@ -14,6 +14,7 @@ public class ResurceSpawner : MonoBehaviour
     private Coroutine _spawnCoroutine;
 
     public List<IMineable> Minebls { get => _minebls; private set => _minebls = value; }
+    public float SpawnDeley { get => _spawnDeley; set => _spawnDeley = value; }
 
     public void StartSpawn()
     {
@@ -44,7 +45,7 @@ public class ResurceSpawner : MonoBehaviour
 
             mineble.Ended += DeleteAtList;
 
-            yield return _spawnDeley;
+            yield return SpawnDeley;
         }
     }
 }

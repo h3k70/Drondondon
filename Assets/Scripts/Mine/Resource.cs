@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -50,7 +51,13 @@ public class Resource : MonoBehaviour, IMineable
         if (CurrentUsersCount >= MaxUsers)
             return false;
 
+        miner.Destroyed += OnUserMinerDestroyed;
         CurrentUsersCount++;
         return true;
+    }
+
+    private void OnUserMinerDestroyed(IMiner miner)
+    {
+        TryRemoveUser(miner);
     }
 }

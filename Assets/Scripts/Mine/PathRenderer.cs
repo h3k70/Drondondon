@@ -29,6 +29,8 @@ public class PathRenderer
     {
         if (_drawCoroutine != null)
             _parent.StopCoroutine(_drawCoroutine);
+
+        _lineRenderer.positionCount = 0;
     }
 
     private void PathDraw()

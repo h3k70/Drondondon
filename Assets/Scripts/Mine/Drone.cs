@@ -32,12 +32,18 @@ public class Drone : MonoBehaviour, IMiner
     public UnityAction<IMiner> UnloadStarted { get; set; }
     public UnityAction<IMiner> UnloadEnded { get; set; }
     public UnityAction<bool> BusyStatusChanged { get; set; }
+    public UnityAction<IMiner> Destroyed { get; set; }
 
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _lineRenderer = GetComponent<LineRenderer>();
         _pathRenderer = new(this, _agent, _lineRenderer);
+    }
+
+    private void OnDestroy()
+    {
+        Destroyed?.Invoke(this);
     }
 
     public void SetMineTarget(IMineable target)
@@ -66,6 +72,11 @@ public class Drone : MonoBehaviour, IMiner
     public void StopDrawPath()
     {
         _pathRenderer.Stop();
+    }
+
+    public void SetSpeed(float speed)
+    {
+        _agent.speed = speed;
     }
 
     private void StopMine()
