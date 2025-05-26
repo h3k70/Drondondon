@@ -1,0 +1,76 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Events;
+
+public class Facility : MonoBehaviour, IExtraction
+{
+    [SerializeField] private Drone _dronePref;
+
+    private List<IMineable> _minebles;
+    private List<IMiner> _miners = new();
+    private Coroutine _mineCoroutine;
+
+    public Vector3 Position => transform.position;
+    public float Total { get; private set; }
+
+    public UnityAction<float> TotalChanged { get; set; }
+
+    public void Init(List<IMineable> mineables, int startDronCount)
+    {
+        _minebles = mineables;
+
+        for (int i = 0; i < startDronCount; i++)
+            Spawn();
+    }
+
+    public void StartMine()
+    {
+        _mineCoroutine = StartCoroutine(MineJob());
+    }
+
+    public void Load()
+    {
+        Total++;
+        TotalChanged?.Invoke(Total);
+    }
+
+    public void Spawn()
+    {
+        var dron = Instantiate(_dronePref, transform.position, Quaternion.identity);
+
+        _miners.Add(dron);
+    }
+
+    private void SendDroUpload(IMiner miner)
+    {
+        miner.MineEnded -= SendDroUpload;
+
+        miner.SetUnloadTarget(this);
+    }
+
+    private IEnumerator MineJob()
+    {
+        while(true)
+        {
+            yield return null;
+
+            foreach(var mine in _miners)
+            {
+                if (mine.IsBusy == true)
+                    continue;
+
+                foreach (var resurs in _minebles)
+                {
+                    if (resurs.MaxUsers > resurs.CurrentUsersCount && resurs.Volume > 0)
+                    {
+                        mine.SetMineTarget(resurs);
+                        mine.MineEnded += SendDroUpload;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
